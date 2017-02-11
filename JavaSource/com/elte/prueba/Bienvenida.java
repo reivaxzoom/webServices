@@ -1,4 +1,4 @@
-package com.clearminds.prueba;
+package com.elte.prueba;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
