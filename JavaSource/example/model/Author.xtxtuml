@@ -1,0 +1,67 @@
+package example.model;
+
+import hu.elte.txtuml.api.model.Collection;
+
+signal CreateAuthor {
+	String name;
+}
+
+association AccessAuthors {
+	1 RestService service;
+	* Author author;
+}
+
+class RestService {
+	int nextID;
+	
+	public RestService() {
+		nextID = 0;
+	}
+	
+	initial Init;
+	state Working;
+
+	transition Initial {
+		from Init;
+		to Working;
+	}
+	
+	transition AcceptCreateAuthor {
+		from Working;
+		to Working;
+		trigger CreateAuthor;
+		effect {
+			Author author = new Author(trigger.name, nextID++);
+			link(AccessAuthors.service, this, AccessAuthors.author, author);
+		}
+	}
+	
+	public String getNameOf(String id) {
+		Collection<Author> authors = this->(AccessAuthors.author);
+		for(Author author in authors) {
+			if(author.getID() == id) {
+				return author.getName();
+			}
+		}
+		return "NO SUCH AUTHOR";
+	}
+}
+
+class Author {
+	String id;
+	String name;
+	
+	public Author(String name, int id) {
+		this.id = "author" + id;
+		this.name = name; 
+	}
+
+	public String getID() {
+		return id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+}
